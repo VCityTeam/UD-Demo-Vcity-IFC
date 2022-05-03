@@ -39,7 +39,7 @@ module.exports = (env) => {
     plugins.push(
       new HtmlWebpackPlugin({
         title: 'Demo debug',
-        filename: 'index.html',
+        filename: 'index.html'
       })
     );
 

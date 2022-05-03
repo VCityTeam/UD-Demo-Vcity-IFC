@@ -2,13 +2,14 @@
 
 import * as udviz from 'ud-viz';
 import {LayerChoiceIfcExtension} from '../src/LayerChoiceExtension';
+import { IfcAttributeModule } from './IfcAttribute/IfcAttributeModule';
 import { setIfcStyles } from './Utils';
 
 const app = new udviz.Templates.AllWidget();
 
 app.start('../assets/config/config.json').then((config) => {
   app.addBaseMapLayer();
-
+  app.addElevationLayer();
   app.setupAndAdd3DTilesLayers();
 
   
@@ -34,5 +35,14 @@ app.start('../assets/config/config.json').then((config) => {
   const layerChoice = new udviz.Widgets.LayerChoice(app.layerManager);
   app.addModuleView('layerChoice', layerChoice);
 
+
+  ////// CITY OBJECTS MODULE
+  let cityObjectModule = new udviz.Widgets.CityObjectModule(
+    app.layerManager,
+    app.config
+  );
+  app.addModuleView('selection', cityObjectModule.view);
   new LayerChoiceIfcExtension(layerChoice);
+  new IfcAttributeModule(cityObjectModule); 
+
 });
