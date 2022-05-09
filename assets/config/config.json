@@ -15,7 +15,7 @@
     },
     {
       "id": "doua",
-      "url": "http://localhost:8003/tilesets/doua_elevated/tileset.json",
+      "url": "http://localhost:8003/tilesets/doua_test/tileset.json",
       "color": "0xFFFFFF",
       "ifc": "true"
     },

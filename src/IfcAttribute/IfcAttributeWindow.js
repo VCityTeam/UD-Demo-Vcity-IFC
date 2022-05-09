@@ -49,7 +49,6 @@ export class IfcAttributeWindow extends Widgets.Components.GUI.Window {
       this.getOidByGuid();
       if (this.oid) {
         this.download();
-        // this.getProgress();
         this.getDownloadData();
 
         let div = this.ifcAttributeElement;
