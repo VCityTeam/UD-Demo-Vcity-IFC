@@ -39,7 +39,7 @@
     "version": "1.3.0",
     "format": "image/jpeg",
     "layer_name": "Base_Map",
-    "maxSubdivisionLevel": 6
+    "maxSubdivisionLevel": 10
   },
   "elevation_layer": {
     "url": "https://download.data.grandlyon.com/wms/grandlyon",
