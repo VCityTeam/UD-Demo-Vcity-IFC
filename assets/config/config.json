@@ -20,8 +20,8 @@
       "color": "0xFFFFFF"
     },
     {
-      "id": "doua",
-      "url": "http://localhost:8003/tilesets/doua/tileset.json",
+      "id": "ifc_chaufferie_doua",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/ifc_chaufferie_doua/tileset.json",
       "color": "0xFFFFFF",
       "ifc": "true"
     }
