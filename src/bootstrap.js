@@ -43,6 +43,9 @@ app.start('../assets/config/config.json').then((config) => {
   );
   app.addModuleView('selection', cityObjectModule.view);
   new LayerChoiceIfcExtension(layerChoice);
-  new IfcAttributeModule(cityObjectModule); 
+  if(config['bimserver']){
+    console.log(config['bimserver']);
+    new IfcAttributeModule(cityObjectModule,config['bimserver'].url,config['bimserver'].username,config['bimserver'].password,config['bimserver'].project_name); 
+  }
 
 });

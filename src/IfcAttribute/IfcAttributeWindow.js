@@ -2,27 +2,35 @@ import { Widgets } from 'ud-viz';
 import $ from 'jQuery';
 
 export class IfcAttributeWindow extends Widgets.Components.GUI.Window {
-  constructor(cityObject, htmlElement) {
+  constructor(cityObject, htmlElement, url = undefined, username = undefined, password = undefined, project_name = undefined) {
     super('ifcAttribute', 'ifc Attribute', false);
 
     this.cityObject;
 
     this.ifcId;
 
-    // this.token = undefined;
-    // this.roid = undefined;
-    // this.oid = undefined;
-    // this.serialiazerOid = undefined;
-    // this.downloadToken = undefined;
-    // // FIXME: hardwire this somewhere else than down here !
-    this.serverUrl = 'http://localhost:8888/bimserver/json';
-    this.serverGetUrl = 'http://localhost:8888/bimserver/download';
+    this.token = undefined;
+    this.roid = undefined;
+    this.oid = undefined;
+    this.serialiazerOid = undefined;
+    this.downloadToken = undefined;
+    this.jsonObject = undefined;
 
-    // this.jsonObject = undefined;
+    // // FIXME: hardwire this somewhere else than down here !
+    this.serverUrl = url+'/json';
+    this.serverGetUrl = url+'/download';
 
     this.appendTo(htmlElement);
+    this.logInBimServer(username,password);
+    this.getProjectsByName(project_name);
+    if(this.token && this.roid){
+      this.getSerializerByName();
+      this.update(cityObject);
+    }
+    else {
+      this.addAttribute("Connection error","Check configuration of BimServer in configuration file");
+    }
 
-    this.update(cityObject);
   }
 
   get innerContentHtml() {
@@ -33,64 +41,38 @@ export class IfcAttributeWindow extends Widgets.Components.GUI.Window {
   }
 
   update(cityObject) {
-    if (cityObject) {
-      while (this.ifcDivElement.hasChildNodes()) {
-        this.ifcDivElement.removeChild(this.ifcDivElement.firstChild);
-      }
-      this.cityObject = cityObject;
-      this.ifcId = this.cityObject.props['id'];
-      this.addAttribute('id');
-      // this.addAttribute('classe');
-      // this.addAttribute('name');
-      // this.addPSET();
-      this.logInBimServer();
-      this.getProjectsByName();
-      this.getSerializerByName();
-      this.getOidByGuid();
-      if (this.oid) {
-        this.download();
-        this.getDownloadData();
-
-        let div = this.ifcAttributeElement;
-        let html = 'Classe : ' + this.jsonObject._t + '<br>';
-        html += 'GlobalId : ' + this.jsonObject.GlobalId + '<br>';
-        html += 'Name : ' + this.jsonObject.Name + '<br>';
-        html += 'Object Type : ' + this.jsonObject.ObjectType + '<br>';
-        html += 'Predefined Type : ' + this.jsonObject.PredefinedType + '<br>';
-        console.log(this.jsonObject);
-        // html += 'Typed by : <ul>';
-        // for (let obj in this.jsonObject._rIsTypedBy) {
-        //   html +=
-        //     '<li>' +
-        //     this.jsonObject._rIsTypedBy[obj]._t +
-        //     ' ' +
-        //     this.jsonObject._rIsTypedBy[obj]._i +
-        //     ' </li>';
-        // }
-        // html += '</ul>Defined by : <ul>';
-        // for (var obj in this.jsonObject._rIsDefinedBy) {
-        //   console.log(obj);
-        //   html +=
-        //     '<li>' +
-        //     this.jsonObject._rIsDefinedBy[obj]._t +
-        //     ' ' +
-        //     this.jsonObject._rIsDefinedBy[obj]._i +
-        //     ' </li>';
-        // }
-        // html += '</ul>';
-        div.innerHTML = html;
+    if(this.token){
+      if (cityObject) {
+        while (this.ifcDivElement.hasChildNodes()) {
+          this.ifcDivElement.removeChild(this.ifcDivElement.firstChild);
+        }
+        this.cityObject = cityObject;
+        this.ifcId = this.cityObject.props['id'];
+        this.addBatchTableAttribute('id');
+        this.getOidByGuid();
+        if (this.oid) {
+          this.download();
+          this.getDownloadData();
+          this.addAttribute('Classe',this.jsonObject._t);
+          this.addAttribute('Global Id',this.jsonObject.GlobalId);
+          this.addAttribute('Name',this.jsonObject.Name);
+          this.addAttribute('Object Type',this.jsonObject.ObjectType);
+        }
       }
     }
   }
 
-  addAttribute(attributeName) {
-    if (this.cityObject.props[attributeName]) {
-      let new_div = document.createElement('div');
-      new_div.id = attributeName;
-      new_div.innerText =
-        attributeName + ' : ' + this.cityObject.props[attributeName];
-      this.ifcDivElement.appendChild(new_div);
-    }
+  addBatchTableAttribute(attributeName) {
+    if (this.cityObject.props[attributeName]) 
+      this.addAttribute(attributeName,this.cityObject.props[attributeName]);
+  }
+
+  addAttribute(attributeName,attributeValue) {
+    let new_div = document.createElement('div');
+    new_div.id = attributeName;
+    new_div.innerText =
+      attributeName + ' : ' + attributeValue;
+    this.ifcDivElement.appendChild(new_div);
   }
 
   addPSET() {
@@ -112,7 +94,7 @@ export class IfcAttributeWindow extends Widgets.Components.GUI.Window {
 
   windowCreated() {}
 
-  logInBimServer() {
+  logInBimServer(username,password) {
     $.ajax({
       type: 'POST',
       url: this.serverUrl,
@@ -122,8 +104,8 @@ export class IfcAttributeWindow extends Widgets.Components.GUI.Window {
                     "interface": "AuthInterface", 
                     "method": "login", 
                     "parameters": {
-                      "username": "admin@admin.fr",
-                      "password": "admin"
+                      "username": "${username}",
+                      "password": "${password}"
                     }
                   }
                 }`,
@@ -131,7 +113,7 @@ export class IfcAttributeWindow extends Widgets.Components.GUI.Window {
       success: (data) => {
         this.token = data.response.result;
         console.log('logged in');
-      },
+      }
     });
   }
 
@@ -158,7 +140,6 @@ export class IfcAttributeWindow extends Widgets.Components.GUI.Window {
       datatype: 'json',
       success: (data) => {
         this.roid = data.response.result[0].lastRevisionId;
-        console.log(this.roid);
       },
     });
   }
@@ -186,7 +167,6 @@ export class IfcAttributeWindow extends Widgets.Components.GUI.Window {
       datatype: 'json',
       success: (data) => {
         this.serialiazerOid = data.response.result.oid;
-        console.log(this.serialiazerOid);
       },
     });
   }
@@ -218,78 +198,51 @@ export class IfcAttributeWindow extends Widgets.Components.GUI.Window {
       data: json,
       datatype: 'json',
       success: (data) => {
-        console.log(this.cityObject);
         this.oid = data.response.result;
-        console.log(this.oid);
       },
     });
   }
 
-    download(){
-      let json = `{
-              "token":"` + this.token + `",
-              "request": {
-                  "interface": "ServiceInterface",
-                  "method": "download",
-                  "parameters": {
-                    "roids": ["` + this.roid + `"],
-                    "query": "{\\"oids\\":[` + this.oid + `]}",
-                    "serializerOid": `+ this.serialiazerOid + `,
-                    "sync": "false"
-                  }
-              }
-          }
-            `;
-      $.ajax({
-        type: 'POST',
-        url: this.serverUrl,
-        async: false,
-        data: json,
-        datatype: 'json',
-        success: (data) => {
-          this.downloadToken = data.response.result;
+  download(){
+    let json = `{
+            "token":"` + this.token + `",
+            "request": {
+                "interface": "ServiceInterface",
+                "method": "download",
+                "parameters": {
+                  "roids": ["` + this.roid + `"],
+                  "query": "{\\"oids\\":[` + this.oid + `]}",
+                  "serializerOid": `+ this.serialiazerOid + `,
+                  "sync": "false"
+                }
+            }
         }
-      });
-    }
+          `;
+    $.ajax({
+      type: 'POST',
+      url: this.serverUrl,
+      async: false,
+      data: json,
+      datatype: 'json',
+      success: (data) => {
+        this.downloadToken = data.response.result;
+      }
+    });
+  }
 
-    // getProgress(){
-    //   let json = `{
-    //           "token":"` + this.token + `",
-    //           "request": {
-    //               "interface": "NotificationRegistryInterface",
-    //               "method": "getProgress",
-    //               "parameters": {
-    //                 "topicId": ` + this.downloadToken + `
-    //               }
-    //             }
-    //       }
-    //         `;
-    //   $.ajax({
-    //     type: 'POST',
-    //     url: this.serverUrl,
-    //     async: false,
-    //     data: json,
-    //     datatype: 'json',
-    //     success: (data) => {
-    //       console.log(data);
-    //     }
-    //   });
-    // }
-
-    getDownloadData() {
-      let json = 'topicId=' + this.downloadToken + '&token=' + this.token;
-      $.ajax({
-        type: 'GET',
-        url: this.serverGetUrl,
-        async: false,
-        data : json,
-        datatype: 'json',
-        success: (data) => {
-          this.jsonObject = data.objects[0];
-          console.log(data);
-        }
-      });
-    }
+  getDownloadData() {
+    let json = 'topicId=' + this.downloadToken + '&token=' + this.token;
+    $.ajax({
+      type: 'GET',
+      url: this.serverGetUrl,
+      async: false,
+      data : json,
+      datatype: 'json',
+      success: (data) => {
+        this.jsonObject = data.objects[0];
+      }
+    });
+  }
 
   get ifcAttributeID() {
     return 'ifc_attribute';

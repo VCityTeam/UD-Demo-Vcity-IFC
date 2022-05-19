@@ -7,6 +7,12 @@
       "logo-univ-lyon.png"
     ]
   },
+  "bimserver":{
+    "username":"admin@admin.fr",
+    "password":"admin",
+    "url":"http://localhost:8888/bimserver",
+    "project":"doua"
+  },
   "3DTilesLayers": [
     {
       "id": "Lyon-1",
@@ -15,13 +21,7 @@
     },
     {
       "id": "doua",
-      "url": "http://localhost:8003/tilesets/doua_test/tileset.json",
-      "color": "0xFFFFFF",
-      "ifc": "true"
-    },
-    {
-      "id": "fzk",
-      "url": "http://localhost:8003/tilesets/fzk/tileset.json",
+      "url": "http://localhost:8003/tilesets/doua/tileset.json",
       "color": "0xFFFFFF",
       "ifc": "true"
     }
