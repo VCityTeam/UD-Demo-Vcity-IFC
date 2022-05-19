@@ -11,7 +11,7 @@
     "username":"admin@admin.fr",
     "password":"admin",
     "url":"http://localhost:8888/bimserver",
-    "project":"doua"
+    "project_name":"doua"
   },
   "3DTilesLayers": [
     {

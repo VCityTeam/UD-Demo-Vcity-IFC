@@ -2,9 +2,13 @@ import { Widgets } from 'ud-viz';
 import { IfcAttributeWindow } from './IfcAttributeWindow';
 
 export class IfcAttributeModule extends Widgets.Components.ModuleView {
-  constructor(cityObjectModule) {
+  constructor(cityObjectModule, url = undefined, username = undefined, password = undefined, project_name = undefined) {
     super();
     this.ifcAttributeWindow;
+    this.url = url;
+    this.username = username;
+    this.password = password;
+    this.project_name = project_name;
     if(cityObjectModule){
       cityObjectModule.addEventListener('EVENT_CITY_OBJECT_SELECTED', (cityObject) => {
         if(!cityObjectModule.isExtensionUsed('ifc_attribute') && (cityObject.tile.layer.isIfcLayer)){
@@ -35,7 +39,7 @@ export class IfcAttributeModule extends Widgets.Components.ModuleView {
         type: 'button',
         html: 'IFC info',
         callback: () => {
-          this.ifcAttributeWindow = new IfcAttributeWindow(cityObject,cityObjectModule.view.parentElement);
+          this.ifcAttributeWindow = new IfcAttributeWindow(cityObject,cityObjectModule.view.parentElement, this.url, this.username, this.password, this.project_name);
         }
       });
     }

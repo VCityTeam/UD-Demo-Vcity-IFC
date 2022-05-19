@@ -19,7 +19,6 @@ export class IfcAttributeWindow extends Widgets.Components.GUI.Window {
     // // FIXME: hardwire this somewhere else than down here !
     this.serverUrl = url+'/json';
     this.serverGetUrl = url+'/download';
-
     this.appendTo(htmlElement);
     this.logInBimServer(username,password);
     this.getProjectsByName(project_name);
@@ -117,7 +116,7 @@ export class IfcAttributeWindow extends Widgets.Components.GUI.Window {
     });
   }
 
-  getProjectsByName() {
+  getProjectsByName(project_name) {
     let json =
       `{
               "token":"` +
@@ -127,7 +126,7 @@ export class IfcAttributeWindow extends Widgets.Components.GUI.Window {
                       "interface": "ServiceInterface", 
                       "method": "getProjectsByName", 
                       "parameters": {
-                          "name": "doua"
+                          "name": "${project_name}"
                       }
                   }
               }
