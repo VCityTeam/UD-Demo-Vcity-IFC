@@ -8,9 +8,9 @@
     ]
   },
   "bimserver":{
-    "username":"admin@admin.fr",
-    "password":"admin",
-    "url":"http://localhost:8888/bimserver",
+    "username":"admin@vcity.fr",
+    "password":"vcity",
+    "url":"https://bimserver.vcityliris.data.alpha.grandlyon.com/bimserver",
     "project_name":"doua"
   },
   "3DTilesLayers": [
