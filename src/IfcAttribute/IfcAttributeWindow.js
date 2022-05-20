@@ -1,5 +1,5 @@
 import { Widgets } from 'ud-viz';
-import $ from 'jQuery';
+import $ from 'jquery';
 
 export class IfcAttributeWindow extends Widgets.Components.GUI.Window {
   constructor(cityObject, htmlElement, url = undefined, username = undefined, password = undefined, project_name = undefined) {
