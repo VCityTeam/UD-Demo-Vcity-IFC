@@ -7,3 +7,4 @@ TODO.txt
 .vs
 .vscode
 Test/**
+package-lock.json
