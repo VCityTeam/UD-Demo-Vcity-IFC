@@ -8,14 +8,11 @@ import { setIfcStyles } from './Utils';
 const app = new udviz.Templates.AllWidget();
 
 app.start('../assets/config/config.json').then((config) => {
-  app.addBaseMapLayer();
-  app.addElevationLayer();
-  app.setupAndAdd3DTilesLayers();
+  const layerManager = app.view3D.getLayerManager();
 
-  
   for (let layer of config['3DTilesLayers']) {
     if (layer['ifc']) {
-      setIfcStyles(app.layerManager, layer['id']);
+      setIfcStyles(layerManager, layer['id']);
     }
   }
   
@@ -24,21 +21,21 @@ app.start('../assets/config/config.json').then((config) => {
   app.addModuleView('about', about);
 
   ////// 3DTILES DEBUG
-  const debug3dTilesWindow = new udviz.Widgets.Extensions.Debug3DTilesWindow(
-    app.layerManager
+  const debug3dTilesWindow = new udviz.Widgets.Debug3DTilesWindow(
+    layerManager
   );
   app.addModuleView('3dtilesDebug', debug3dTilesWindow, {
     name: '3DTiles Debug',
   });
 
   ////// LAYER CHOICE MODULE
-  const layerChoice = new udviz.Widgets.LayerChoice(app.layerManager);
+  const layerChoice = new udviz.Widgets.LayerChoice(layerManager);
   app.addModuleView('layerChoice', layerChoice);
 
 
   ////// CITY OBJECTS MODULE
   let cityObjectModule = new udviz.Widgets.CityObjectModule(
-    app.layerManager,
+    layerManager,
     app.config
   );
   app.addModuleView('selection', cityObjectModule.view);
